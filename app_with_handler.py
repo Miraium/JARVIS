@@ -69,10 +69,11 @@ def message_text(event):
     )
 
 @handler.add(MessageEvent, message=StickerMessage)
-def sticker_text(event):
+def message_sticker(event):
+    name = line_bot_api.get_profile(event.source.user_id)
     line_bot_api.reply_message(
         event.reply_token,
-        [TextSendMessage(text="なるほど、スタンプですか。考えましたね。"),StickerSendMessage(package_id=4,sticker_id=296)]
+        [TextSendMessage(text="なるほど、スタンプですか。考えましたね、"+name+"さん。"),StickerSendMessage(package_id=4,sticker_id=296)]
     )
 
 
