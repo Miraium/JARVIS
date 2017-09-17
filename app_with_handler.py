@@ -63,6 +63,9 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
+    if event.source.group_id:
+        print(event.source.group_id)
+    
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text+"ですね。")
