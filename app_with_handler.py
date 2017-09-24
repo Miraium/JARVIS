@@ -27,6 +27,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage, PostbackEvent, PostbackTemplateAction, Postback
 )
 
+import weather
+
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
@@ -63,10 +65,23 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text+"ですね。")
-    )
+    input_text = event.message.text
+
+    if (input_text=="天気"):
+        # 天気の問い合わせに対しては特別に応答
+        weather_text,link = weather.getWeatherData()
+        weather_send_message = TextSendMessage(text=weather_text)
+        link_send_message = TextSendMessage(text=link)
+        send_messages = [weather_send_message,link_send_message]
+        line_bot_api.reply_message(
+            event.reply_token,
+            send_messages
+        )
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=event.message.text+"ですね。")
+        )
 
 @handler.add(MessageEvent, message=StickerMessage)
 def message_sticker(event):

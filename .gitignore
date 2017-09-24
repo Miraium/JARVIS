@@ -8,3 +8,4 @@ db.sqlite3
 
 settings.py
 push_test.py
+weather_push_test.py
