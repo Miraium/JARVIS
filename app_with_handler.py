@@ -69,10 +69,20 @@ def message_text(event):
 
     if (input_text=="天気"):
         # 天気の問い合わせに対しては特別に応答
-        weather_text,link = weather.getWeatherData()
-        weather_send_message = TextSendMessage(text=weather_text)
-        link_send_message = TextSendMessage(text=link)
-        send_messages = [weather_send_message,link_send_message]
+        # weather_text,link = weather.getWeatherData()
+        # weather_send_message = TextSendMessage(text=weather_text)
+        # link_send_message = TextSendMessage(text=link)
+        # send_messages = [weather_send_message,link_send_message]
+        # line_bot_api.reply_message(
+        #     event.reply_token,
+        #     send_messages
+        # )
+
+        # カルーセル版
+        text_message = TextSendMessage(text="天気情報を表示します。")
+        weather_info = weather.getWeatherDataList()
+        carousel_message = weather.createCarouselTemplate(weather_info)
+        send_messages = [text_message, carousel_message]
         line_bot_api.reply_message(
             event.reply_token,
             send_messages
