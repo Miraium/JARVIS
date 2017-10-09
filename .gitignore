@@ -6,6 +6,8 @@ db.sqlite3
 
 /Pipfile
 
+/test/*
+launch.json
+
 settings.py
 push_test.py
-weather_push_test.py
