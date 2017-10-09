@@ -27,7 +27,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage, PostbackEvent, PostbackTemplateAction, Postback
 )
 
-import weather
+import weather,gurunavi
 
 app = Flask(__name__)
 
@@ -83,6 +83,14 @@ def message_text(event):
         weather_info = weather.getWeatherDataList()
         carousel_message = weather.createCarouselTemplate(weather_info)
         send_messages = [text_message, carousel_message]
+        line_bot_api.reply_message(
+            event.reply_token,
+            send_messages
+        )
+    if (input_text)=="食事":
+        freeword = "池袋 カレー"
+        carousel_message = gurunavi.createCarouselTemplate(freeword)
+        send_messages = [carousel_message]
         line_bot_api.reply_message(
             event.reply_token,
             send_messages
