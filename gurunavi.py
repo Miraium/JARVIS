@@ -12,7 +12,8 @@ from linebot.models import (
     CarouselTemplate, CarouselColumn, URITemplateAction, TemplateSendMessage
 )
 
-GNAVI_KEY = settings.gnavi_key
+# GNAVI_KEY = settings.gnavi_key
+GNAVI_KEY = os.getenv('GURUNAVI_KEY', None)
 MAX_SHOW = 5
 MAX_TEXT = 60
 
