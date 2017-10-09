@@ -3,7 +3,6 @@
 import sys
 # jsonの処理用
 import requests
-import settings
 import urllib.request, urllib.parse, urllib.error
 import json
 
@@ -12,6 +11,7 @@ from linebot.models import (
     CarouselTemplate, CarouselColumn, URITemplateAction, TemplateSendMessage
 )
 
+# import settings
 # GNAVI_KEY = settings.gnavi_key
 GNAVI_KEY = os.getenv('GURUNAVI_KEY', None)
 MAX_SHOW = 5
