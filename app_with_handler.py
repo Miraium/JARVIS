@@ -74,6 +74,8 @@ def reactArguments(bot, event):
             event.reply_token,
             send_messages
         )
+    # 処理が終わったらモードを戻す
+    mode = "Default"
 
 
 @handler.add(MessageEvent, message=TextMessage)
