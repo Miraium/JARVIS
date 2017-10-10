@@ -90,9 +90,10 @@ def message_text(event):
             )
         else:
             text_message = TextSendMessage(text="どう検索しますか?")
+            send_messages = [text_message]        
             line_bot_api.reply_message(
                 event.reply_token,
-                send_message
+                send_messages
             )
             receiveArgFlg = True
     else:
