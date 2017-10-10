@@ -44,7 +44,7 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-receiveArgFlg = False
+mode = "Default"
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -63,15 +63,41 @@ def callback():
 
     return 'OK'
 
+def reactArguments(bot, event):
+    global mode
+    input_text = event.messag.text
+    
+    if mode == "Gnavi":
+        carousel_message = gurunavi.createCarouselTemplate(input_text)
+        send_messages = [carousel_message]
+        line_bot_api.reply_message(
+            event.reply_token,
+            send_messages
+        )
+
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
-    input_text = event.message.text
-    global receiveArgFlg
-    if (receiveArgFlg == True):
-        freeword = input_text
+    # 入力されたテキストを取り出す
+    input_text = event.messag.text
 
+    # モードがデフォルトモードじゃない場合は，モードに応じた特別な処理を行って終了?
+    # -->引数を受け付けるモードの場合は，特別な処理を行って終了
+    if mode == "Gnavi":
+        reactArguments(line_bot_api,event)
+        return
+
+    # 現在Defaultモードの場合で，
+    # テキストに応じてモードを切り替える
     if (input_text=="天気"):
+        mode = "Weather"
+    elif(input_text=="食事"):
+        mode = "Gnavi"
+    else:
+        mode = "Default"
+
+    # Defaultモードから各モードに切り替わったときの処理
+    if (mode=="Weather"):
         text_message = TextSendMessage(text="天気情報を表示します。")
         weather_info = weather.getWeatherDataList()
         carousel_message = weather.createCarouselTemplate(weather_info)
@@ -80,22 +106,13 @@ def message_text(event):
             event.reply_token,
             send_messages
         )
-    if input_text=="食事":
-        if receiveArgFlg == True:
-            carousel_message = gurunavi.createCarouselTemplate(freeword)
-            send_messages = [carousel_message]
-            line_bot_api.reply_message(
-                event.reply_token,
-                send_messages
-            )
-        else:
-            text_message = TextSendMessage(text="どう検索しますか?")
-            send_messages = [text_message]        
-            line_bot_api.reply_message(
-                event.reply_token,
-                send_messages
-            )
-            receiveArgFlg = True
+    elif mode=="Gnavi":
+        text_message = TextSendMessage(text="どう検索しますか?")
+        send_messages = [text_message]        
+        line_bot_api.reply_message(
+            event.reply_token,
+            send_messages
+        )
     else:
         line_bot_api.reply_message(
             event.reply_token,
