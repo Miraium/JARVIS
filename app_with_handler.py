@@ -65,7 +65,7 @@ def callback():
 
 def reactArguments(bot, event):
     global mode
-    input_text = event.messag.text
+    input_text = event.message.text
     
     if mode == "Gnavi":
         carousel_message = gurunavi.createCarouselTemplate(input_text)
