@@ -43,7 +43,7 @@ def createURLwithQuery(freeword):
     # ( "latitude",  latitude  ),
     # ( "longitude", longitude ),
     # ( "range",     range     )
-    ("freeword", "池袋,カレー")
+    ("freeword", freeword)
     ]
     # URL生成
     url = rooturl
