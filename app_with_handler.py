@@ -83,6 +83,7 @@ def message_text(event):
 
     # モードがデフォルトモードじゃない場合は，モードに応じた特別な処理を行って終了?
     # -->引数を受け付けるモードの場合は，特別な処理を行って終了
+    global mode
     if mode == "Gnavi":
         reactArguments(line_bot_api,event)
         return
