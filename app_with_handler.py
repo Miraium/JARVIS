@@ -79,7 +79,7 @@ def reactArguments(bot, event):
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     # 入力されたテキストを取り出す
-    input_text = event.messag.text
+    input_text = event.message.text
 
     # モードがデフォルトモードじゃない場合は，モードに応じた特別な処理を行って終了?
     # -->引数を受け付けるモードの場合は，特別な処理を行って終了
