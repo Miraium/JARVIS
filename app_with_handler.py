@@ -67,7 +67,8 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     input_text = event.message.text
-    if receiveArgFlg == True:
+    global receiveArgFlg
+    if (receiveArgFlg == True):
         freeword = input_text
 
     if (input_text=="天気"):
@@ -79,7 +80,7 @@ def message_text(event):
             event.reply_token,
             send_messages
         )
-    if (input_text)=="食事":
+    if input_text=="食事":
         if receiveArgFlg == True:
             carousel_message = gurunavi.createCarouselTemplate(freeword)
             send_messages = [carousel_message]
