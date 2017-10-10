@@ -44,6 +44,7 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+receiveArgFlg = False
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -66,19 +67,10 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
     input_text = event.message.text
+    if receiveArgFlg == True:
+        freeword = input_text
 
     if (input_text=="天気"):
-        # 天気の問い合わせに対しては特別に応答
-        # weather_text,link = weather.getWeatherData()
-        # weather_send_message = TextSendMessage(text=weather_text)
-        # link_send_message = TextSendMessage(text=link)
-        # send_messages = [weather_send_message,link_send_message]
-        # line_bot_api.reply_message(
-        #     event.reply_token,
-        #     send_messages
-        # )
-
-        # カルーセル版
         text_message = TextSendMessage(text="天気情報を表示します。")
         weather_info = weather.getWeatherDataList()
         carousel_message = weather.createCarouselTemplate(weather_info)
@@ -88,13 +80,20 @@ def message_text(event):
             send_messages
         )
     if (input_text)=="食事":
-        freeword = "池袋 カレー"
-        carousel_message = gurunavi.createCarouselTemplate(freeword)
-        send_messages = [carousel_message]
-        line_bot_api.reply_message(
-            event.reply_token,
-            send_messages
-        )
+        if receiveArgFlg == True:
+            carousel_message = gurunavi.createCarouselTemplate(freeword)
+            send_messages = [carousel_message]
+            line_bot_api.reply_message(
+                event.reply_token,
+                send_messages
+            )
+        else:
+            text_message = TextSendMessage(text="どう検索しますか?")
+            line_bot_api.reply_message(
+                event.reply_token,
+                send_message
+            )
+            receiveArgFlg = True
     else:
         line_bot_api.reply_message(
             event.reply_token,
