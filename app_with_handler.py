@@ -70,7 +70,7 @@ def reactArguments(bot, event):
     if mode == "Gnavi":
         carousel_message = gurunavi.createCarouselTemplate(input_text)
         send_messages = [carousel_message]
-        line_bot_api.reply_message(
+        bot.reply_message(
             event.reply_token,
             send_messages
         )
@@ -86,7 +86,7 @@ def message_text(event):
     # モードがデフォルトモードじゃない場合は，モードに応じた特別な処理を行って終了?
     # -->引数を受け付けるモードの場合は，特別な処理を行って終了
     global mode
-    if mode == "Gnavi":
+    if (mode == "Gnavi") :
         reactArguments(line_bot_api,event)
         return
 
@@ -109,7 +109,7 @@ def message_text(event):
             event.reply_token,
             send_messages
         )
-    elif mode=="Gnavi":
+    elif (mode=="Gnavi"):
         text_message = TextSendMessage(text="どう検索しますか?")
         send_messages = [text_message]        
         line_bot_api.reply_message(
