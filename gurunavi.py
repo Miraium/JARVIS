@@ -72,6 +72,7 @@ def getJsonData(url):
     # エラーの場合
     if "error" in data :
         if "message" in data :
+            print("エラーメッセージ")            
             print("{0}".format( data["message"] ))
         else :
             print("データ取得に失敗しました。")
