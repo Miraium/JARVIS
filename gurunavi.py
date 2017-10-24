@@ -75,6 +75,7 @@ def getJsonData(url):
             print("{0}".format( data["message"] ))
         else :
             print("データ取得に失敗しました。")
+            print(data["code"])
         sys.exit()
 
     return data
