@@ -68,12 +68,13 @@ def reactArguments(bot, event):
     input_text = event.message.text
     
     if mode == "Gnavi":
-        carousel_message = gurunavi.createCarouselTemplate(input_text)
-        send_messages = [carousel_message]
-        bot.reply_message(
-            event.reply_token,
-            send_messages
-        )
+        # carousel_message = gurunavi.createCarouselTemplate(input_text)
+        # send_messages = [carousel_message]
+        # bot.reply_message(
+        #     event.reply_token,
+        #     send_messages
+        # )
+        gurunavi.reply(bot,event,input_text)
     # 処理が終わったらモードを戻す
     mode = "Default"
 

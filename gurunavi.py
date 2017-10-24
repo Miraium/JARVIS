@@ -31,6 +31,13 @@ def is_str( data = None ) :
     else :
         return False
 
+def reply(bot,event,input_text):
+    carousel_message = createCarouselTemplate(input_text)
+    send_messages = [carousel_message]
+    bot.reply_message(
+        event.reply_token,
+        send_messages
+    )
 
 def createURLwithQuery(freeword):
     ####
@@ -40,9 +47,6 @@ def createURLwithQuery(freeword):
     query = [
     ( "format",    "json"    ),
     ( "keyid",     keyid     ),
-    # ( "latitude",  latitude  ),
-    # ( "longitude", longitude ),
-    # ( "range",     range     )
     ("freeword", freeword)
     ]
     # URL生成
