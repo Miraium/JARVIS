@@ -120,7 +120,7 @@ def message_text(event):
     else:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=event.message.text+"ですね。")
+            TextSendMessage(text=event.message.text+"ですか。なるほど。")
         )
 
 @handler.add(MessageEvent, message=StickerMessage)
