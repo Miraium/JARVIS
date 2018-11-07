@@ -95,7 +95,7 @@ def message_text(event):
     # テキストに応じてモードを切り替える
     if (input_text=="天気"):
         mode = "Weather"
-    elif(input_text=="食事"):
+    elif(input_text=="食事" or input_text=="ご飯"):
         mode = "Gnavi"
     else:
         mode = "Default"
@@ -120,7 +120,7 @@ def message_text(event):
     else:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=event.message.text+"ですか。なるほど。")
+            TextSendMessage(text=event.message.text+"ですね。")
         )
 
 @handler.add(MessageEvent, message=StickerMessage)
