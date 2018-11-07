@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+ぐるなびレストラン検索APIを使ったレストラン情報の提示用
+
+API仕様
+https://api.gnavi.co.jp/api/manual/restsearch/
+"""
+
 import os
 import sys
 # jsonの処理用
@@ -18,9 +25,24 @@ MAX_SHOW = 5
 MAX_TEXT = 60
 
 # APIアクセスキー
-keyid     = GNAVI_KEY
 # エンドポイントURL
-rooturl       = "https://api.gnavi.co.jp/RestSearchAPI/20150630/"
+rooturl = "https://api.gnavi.co.jp/RestSearchAPI/v3/"
+
+class RestaurantInfo():
+    def __init__(self):
+        self.name = "No Title"
+        self.shop_img = ""
+        self.shop_url = ""
+        self.text_pr = "No information"
+        self.opentime = "Open :  - Close : "
+        self.holiday = "-"
+    
+    def show(self):
+        print("Name   : {0}".format(self.name))
+        print("PR     : {0}".format(self.text_pr))
+        print("Open   : {0}".format(self.opentime))
+        print("Holiday: {0}".format(self.holiday))
+        print("URL    : {0}".format(self.shop_url))
 
 ####
 # 変数の型が文字列かどうかチェック
@@ -39,27 +61,26 @@ def reply(bot,event,input_text):
         send_messages
     )
 
-def createURLwithQuery(freeword):
-    ####
-    # APIアクセス
-    ####
+def create_url_with_query(freeword, keyid=GNAVI_KEY):
+    """
+    APIアクセスのためのURL生成
+    """
     # URLに続けて入れるパラメータを組立
     query = [
-    ( "format",    "json"    ),
-    ( "keyid",     keyid     ),
-    ("freeword", freeword)
+        ("keyid", keyid),
+        ("freeword", freeword)
+        # ("outret", 1) # 電源ありフラグ1
     ]
     # URL生成
     url = rooturl
-    url += "?{0}".format( urllib.parse.urlencode( query ) )
-    
+    url += "?{0}".format(urllib.parse.urlencode(query))
     return url
 
 
-def getJsonData(url):
+def get_json_data(url):
     # API実行
     try :
-        result = urllib.request.urlopen( url ).read()
+        result = urllib.request.urlopen(url).read()
     except ValueError :
         print("APIアクセスに失敗しました。")
         sys.exit()
@@ -83,7 +104,7 @@ def getJsonData(url):
 
     return data
 
-def parseRestaurantData(data):
+def parse_restaurant_data(data):
     # ヒット件数取得
     total_hit_count = None
     if "total_hit_count" in data :
@@ -96,28 +117,24 @@ def parseRestaurantData(data):
     
     # レストランデータ取得
     num_of_shop = 0
-    info_list = []
+    rest_info_list = []
     for rest in data["rest"] :
-        name = "No Title"
-        shop_img = ""
-        shop_url = ""
-        text_pr = "No information"
+        rest_info = RestaurantInfo()
         
-        info = {}
 
         # 店舗名の取得
         if "name" in rest and is_str( rest["name"] ) :
-            name = rest["name"]
+            rest_info.name = rest["name"]
         
         # 画像アドレスの取得(カルーセル取得用)
         if "image_url" in rest :
             image_url = rest["image_url"]
-            if "shop_image1" in image_url and is_str( image_url["shop_image1"] ) :
-                shop_img = image_url["shop_image1"]
+            if "shop_image1" in image_url and is_str(image_url["shop_image1"]):
+                rest_info.shop_img = image_url["shop_image1"]
 
         # 店舗のURL
         if "url" in rest and is_str( rest["url"] ) :
-            shop_url = rest["url"]
+            rest_info.shop_url = rest["url"]
         
         # PR文章
         if "pr" in rest: 
@@ -129,38 +146,40 @@ def parseRestaurantData(data):
                         text_pr = text_pr[0:MAX_TEXT]
                 else:
                     text_pr = "No Information"
+            rest_info.text_pr = text_pr
+        
+        if "opentime" in rest:
+            rest_info.opentime = rest["opentime"]
+        
+        if "holiday" in rest:
+            rest_info.holiday = rest["holiday"]
 
-        info["name"] = name
-        info["shop_img"] = shop_img
-        info["shop_url"] = shop_url
-        info["text_pr"] = text_pr
-
-        info_list.append(info)
+        rest_info_list.append(rest_info)
 
         num_of_shop += 1
         if(num_of_shop >= MAX_SHOW):
             break
     
-    return info_list
+    return rest_info_list
 
 
 def createCarouselTemplate(freeword):
-    url = createURLwithQuery(freeword)
-    data = getJsonData(url)
-    info_list = parseRestaurantData(data)
+    url = create_url_with_query(freeword)
+    data = get_json_data(url)
+    rest_info_list = parse_restaurant_data(data)
 
     columns = []
-    for info in info_list:
+    for rest_info in rest_info_list:
         carousel = CarouselColumn(
-            thumbnail_image_url=info["shop_img"],
-            title=info["name"],
+            thumbnail_image_url=rest_info.shop_img,
+            title=rest_info.name,
             # title = "aa",
-            text=info["text_pr"],
+            text=rest_info.text_pr,
             # text="bb",
             actions=[
                     URITemplateAction(
                         label='URL',
-                        uri=info["shop_url"]
+                        uri=rest_info.shop_url
                     )
             ]
             )
@@ -172,3 +191,16 @@ def createCarouselTemplate(freeword):
     )
     return carousel_template_message
 
+def request_test():
+    import settings
+    keyid = settings.gnavi_key
+    # freeword = "cafe".encode('utf-8')
+    freeword = "自由が丘 cafe"
+    url = create_url_with_query(freeword, keyid)
+    data = get_json_data(url)
+    rest_info_list = parse_restaurant_data(data)
+    for rest_info in rest_info_list:
+        rest_info.show()
+
+if __name__ == "__main__":
+    request_test()
