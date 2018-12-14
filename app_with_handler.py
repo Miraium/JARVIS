@@ -24,7 +24,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage, PostbackEvent, PostbackTemplateAction, Postback
+    MessageEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage, PostbackEvent, PostbackTemplateAction, Postback,
 )
 
 import weather,gurunavi
@@ -90,6 +90,9 @@ def reactArguments(bot, event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
+    if(event.type != "message"):
+        return
+
     # 入力されたテキストを取り出す
     input_text = event.message.text
 
