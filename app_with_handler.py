@@ -62,6 +62,10 @@ def callback():
         abort(400)
 
     return 'OK'
+@app.route("/ifttt", methods=['POST'])
+def callback_ifttt():
+    app.logger.info("IFTTT test")
+    return 'OK'
 
 def reactArguments(bot, event):
     global mode
