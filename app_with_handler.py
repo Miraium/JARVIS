@@ -64,7 +64,9 @@ def callback():
     return 'OK'
 @app.route("/ifttt", methods=['POST'])
 def callback_ifttt():
+    body = request.get_data(as_text=True)
     app.logger.info("IFTTT test")
+    app.logger.info("Request body: " + body)
     return 'OK'
 
 def reactArguments(bot, event):
@@ -152,4 +154,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    app.run(debug=options.debug, port=options.port)
+    # app.run(debug=options.debug, port=options.port)
+    app.run(debug=True, port=options.port)
