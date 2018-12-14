@@ -149,6 +149,15 @@ def reply_to_postback(event):
         messages.append(TextSendMessage(text="そうですか。。少しおやすみになっては?"))
     line_bot_api.reply_message(event.reply_token, messages)
 
+@handler.add(PostbackEvent)
+def reply_to_postback(event):
+    messages = []
+    if event.postback.data == "ac_on_approval":
+        messages.append(TextSendMessage(text="承知いたしました。つけておきます。"))
+    elif event.postback.data == "ac_on_disapproval":
+        messages.append(TextSendMessage(text="そうですか。そのままにしておきます。"))
+    line_bot_api.reply_message(event.reply_token, messages)
+
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'

@@ -29,16 +29,17 @@ class ACControl(object):
         confirm_template_message = TemplateSendMessage(
             alt_text='Confirm template',
             template=ConfirmTemplate(
-                text='Are you sure?',
+                text='エアコンつけておきますか?',
                 actions=[
                     PostbackTemplateAction(
-                        label='postback',
-                        text='postback text',
-                        data='action=buy&itemid=1'
+                        label='承認',
+                        text='承認',
+                        data='ac_on_approval'
                     ), 
-                    MessageTemplateAction(
-                        label='message',
-                        text='message text'
+                    PostbackTemplateAction(
+                        label='否認',
+                        text='否認',
+                        data='ac_on_disapproval'
                     )
                 ]
             )
