@@ -28,6 +28,7 @@ from linebot.models import (
 )
 
 import weather,gurunavi
+from ac_control import ACControl
 
 app = Flask(__name__)
 
@@ -67,6 +68,8 @@ def callback_ifttt():
     body = request.get_data(as_text=True)
     app.logger.info("IFTTT test")
     app.logger.info("Request body: " + body)
+    ac_cont = ACControl()
+    ac_cont.push_confirm()
     return 'OK'
 
 def reactArguments(bot, event):
