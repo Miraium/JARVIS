@@ -7,8 +7,9 @@ from linebot import (
 )
 # linebot用
 from linebot.models import (
-    TemplateSendMessage, ConfirmTemplate, MessageTemplateAction, PostbackTemplateAction
+    TextSendMessage, TemplateSendMessage, ConfirmTemplate, MessageTemplateAction, PostbackTemplateAction
 )
+import thingspeak_read
 
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
 my_user_id = os.getenv('MY_USER_ID', None)
@@ -26,8 +27,10 @@ class ACControl(object):
         self.line_bot_api = LineBotApi(channel_access_token)
     
     def push_confirm(self):
+        environment_information = self.get_environment()
+        information_message = TextSendMessage(environment_information)
         confirm_template_message = TemplateSendMessage(
-            alt_text='Confirm template',
+            alt_text='エアコンつけておきますか?',
             template=ConfirmTemplate(
                 text='エアコンつけておきますか?',
                 actions=[
@@ -44,6 +47,22 @@ class ACControl(object):
                 ]
             )
         )
-        send_messages = [confirm_template_message]
+        send_messages = [information_message, confirm_template_message]
         self.line_bot_api.push_message(my_user_id, send_messages)
         return True
+
+    def get_environment(self):
+        sensor_output_text = """
+        温度: {temperature}度
+        湿度: {humidity}%
+        気圧: {pressure}hPa
+        ({time}時点での情報)
+        """
+        fields = thingspeak_read.get_environment_field()
+        sensor_output_text = sensor_output_text.format(
+            temperature=fields.get("temperature"),
+            humidity=fields.get("humidity"),
+            pressure=fields.get("pressure"),
+            time=fields.get("time")
+            )
+        return sensor_output_text
