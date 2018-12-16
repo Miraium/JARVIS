@@ -2,6 +2,7 @@
 
 import os
 import sys
+import textwrap
 from linebot import (
     LineBotApi
 )
@@ -65,4 +66,5 @@ class ACControl(object):
             pressure=fields.get("pressure"),
             time=fields.get("time")
             )
+        sensor_output_text = textwrap.dedent(sensor_output_text)
         return sensor_output_text
