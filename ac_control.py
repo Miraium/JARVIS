@@ -29,8 +29,9 @@ class ACControl(object):
         self.line_bot_api = LineBotApi(channel_access_token)
     
     def push_confirm(self):
-        # environment_information = self.get_environment()
-        # information_message = TextSendMessage(environment_information)
+        welcome_back_message = TextSendMessage("もうすぐ家ですね。おかえりなさい。")
+        environment_information = self.get_environment()
+        information_message = TextSendMessage(environment_information)
         confirm_template_message = TemplateSendMessage(
             alt_text='エアコンつけておきますか?',
             template=ConfirmTemplate(
@@ -49,8 +50,7 @@ class ACControl(object):
                 ]
             )
         )
-        # send_messages = [information_message, confirm_template_message]
-        send_messages = [confirm_template_message]
+        send_messages = [welcome_back_message, information_message, confirm_template_message]
         self.line_bot_api.push_message(my_user_id, send_messages)
         return True
 
