@@ -55,7 +55,7 @@ class ACControl(object):
         return True
 
     def get_environment(self):
-        sensor_output_text = """
+        sensor_output_text = """\
         温度: {temperature:.2f}度
         湿度: {humidity:.2f}%
         気圧: {pressure:.2f}hPa
@@ -66,7 +66,7 @@ class ACControl(object):
         time_outtext = "{year}/{month}/{date} {hour}:{minute}:{second}".format(
             year = time_obj.year,
             month = time_obj.month,
-            date = time_obj.date,
+            date = time_obj.day,
             hour = time_obj.hour,
             minute = time_obj.minute,
             second = time_obj.second
