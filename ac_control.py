@@ -3,6 +3,7 @@
 import os
 import sys
 import textwrap
+import datetime
 from linebot import (
     LineBotApi
 )
@@ -54,17 +55,26 @@ class ACControl(object):
 
     def get_environment(self):
         sensor_output_text = """
-        温度: {temperature}度
-        湿度: {humidity}%
-        気圧: {pressure}hPa
+        温度: {temperature:.2f}度
+        湿度: {humidity:.2f}%
+        気圧: {pressure:.2f}hPa
         ({time}時点での情報)
         """
         fields = thingspeak_read.get_environment_field()
+        time_obj = datetime.datetime.strptime(fields.get("time"), "Y-%m-%dT%H:%M:%SZ")
+        time_outtext = "{year}/{month}/{date} {hour}:{minute}:{second}".format(
+            year = time_obj.year,
+            month = time_obj.month,
+            date = time_obj.date,
+            hour = time_obj.hour,
+            minute = time_obj.minute,
+            second = time_obj.second
+        )
         sensor_output_text = sensor_output_text.format(
-            temperature=fields.get("temperature"),
-            humidity=fields.get("humidity"),
-            pressure=fields.get("pressure"),
-            time=fields.get("time")
+            temperature=float(fields.get("temperature")),
+            humidity=float(fields.get("humidity")),
+            pressure=float(fields.get("pressure")),
+            time=time_outtext
             )
         sensor_output_text = textwrap.dedent(sensor_output_text)
         return sensor_output_text
