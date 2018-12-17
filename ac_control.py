@@ -4,6 +4,7 @@ import os
 import sys
 import textwrap
 import datetime
+import json
 from linebot import (
     LineBotApi
 )
@@ -24,9 +25,17 @@ if my_user_id is None:
     sys.exit(1)
 
 
+class ACState(object):
+    NO_ACTION = 0
+    TOBE_TURN_ON = 1
+    TOBE_TURN_OFF = 2
+
 class ACControl(object):
+    ac_state_file = "ac_state.json"
+
     def __init__(self):
         self.line_bot_api = LineBotApi(channel_access_token)
+        self.ac_state = {"state": ACState.NO_ACTION}
     
     def push_confirm(self):
         welcome_back_message = TextSendMessage("もうすぐ家ですね。おかえりなさい。")
@@ -79,3 +88,23 @@ class ACControl(object):
             )
         sensor_output_text = textwrap.dedent(sensor_output_text)
         return sensor_output_text
+    
+    def set_no_action_flg(self):
+        self.ac_state["state"] = ACState.NO_ACTION
+        self.__write_current_state()
+
+    def set_turn_on_flg(self):
+        self.ac_state["state"] = ACState.TOBE_TURN_ON
+        self.__write_current_state()
+
+    def set_turn_off_flg(self):
+        self.ac_state["state"] = ACState.TOBE_TURN_OFF
+        self.__write_current_state()
+
+    def __read_current_state(self):
+        with open(ACControl.ac_state_file, 'r') as f:
+            self.ac_state = json.load(f)
+    
+    def __write_current_state(self):
+        with open(ACControl.ac_state_file, 'w') as f:
+            json.dump(self.ac_state, f)

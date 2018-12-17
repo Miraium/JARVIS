@@ -155,11 +155,15 @@ def reply_to_postback(event):
 @handler.add(PostbackEvent)
 def reply_to_postback(event):
     messages = []
+    ac_cont = ACControl()    
     if event.postback.data == "ac_on_approval":
         messages.append(TextSendMessage(text="承知いたしました。つけておきます。"))
+        ac_cont.set_turn_on_flg()
     elif event.postback.data == "ac_on_disapproval":
         messages.append(TextSendMessage(text="そうですか。そのままにしておきます。"))
+        ac_cont.set_no_action_flg()
     line_bot_api.reply_message(event.reply_token, messages)
+
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
