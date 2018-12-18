@@ -5,6 +5,7 @@ import sys
 import textwrap
 import datetime
 import json
+import urllib.request, urllib.parse, urllib.error
 from linebot import (
     LineBotApi
 )
@@ -16,6 +17,10 @@ import thingspeak_read
 
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
 my_user_id = os.getenv('MY_USER_ID', None)
+my_thingspeak_key = os.getenv('THINGSPEAK_APIKEY_STATE', None)
+my_thingspeak_channel = os.getenv('THINGSPEAK_CHANNEL_STATE', None)
+url_template_write = "https://api.thingspeak.com/update?api_key={api_key}&field1={state}"
+url_template_read = "https://api.thingspeak.com/channels/{channel}/feeds.json?api_key={api_key}&results={num_result}"
 
 if channel_access_token is None:
     print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
@@ -102,9 +107,14 @@ class ACControl(object):
         self.__write_current_state()
 
     def __read_current_state(self):
-        with open(ACControl.ac_state_file, 'r') as f:
-            self.ac_state = json.load(f)
+        num_result = 1
+        url = url_template_read.format(channel=my_thingspeak_channel, api_key=my_thingspeak_key, num_result=num_result)
+        result = urllib.request.urlopen(url).read()
+        data = json.loads( result )
+        feeds = data.get("feeds")
+        latest_feed = feeds[0]
+        self.ac_state["state"] = latest_feed.get("field1")
     
     def __write_current_state(self):
-        with open(ACControl.ac_state_file, 'w') as f:
-            json.dump(self.ac_state, f)
+        url = url_template_write.format(api_key=my_thingspeak_key, state=self.ac_state.get("state"))
+        result = urllib.request.urlopen(url).read()
